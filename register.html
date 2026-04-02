@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — TIERRA Meeting 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#F2EFE8; --dark:#1C2B1A; --green:#2D5A27; --green2:#3D7A35;
+      --gold:#8B7340; --muted:#6B6B5A; --border:#D8D4C8; --white:#FFFFFF;
+      --error:#B84040; --amber:#7A5C00;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;}
+    h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;}
+
+    /* HEADER */
+    .site-header{background:var(--dark);padding:1.1rem 3rem;display:flex;align-items:center;justify-content:space-between;}
+    .site-logo{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#fff;text-decoration:none;}
+    .back-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;}
+    .back-link:hover{color:#fff;}
+
+    /* PROGRESS */
+    .progress-bar{background:var(--white);border-bottom:1px solid var(--border);padding:1rem 3rem;position:sticky;top:0;z-index:100;overflow-x:auto;}
+    .progress-steps{display:flex;align-items:center;min-width:600px;}
+    .ps{display:flex;align-items:center;flex:1;position:relative;}
+    .ps:not(:last-child)::after{content:'';position:absolute;left:1.75rem;right:0;top:50%;height:1px;background:var(--border);z-index:0;}
+    .ps.done:not(:last-child)::after,.ps.active:not(:last-child)::after{background:var(--green);}
+    .ps-num{width:1.75rem;height:1.75rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;border:1.5px solid var(--border);background:var(--white);color:var(--muted);position:relative;z-index:1;flex-shrink:0;transition:all .3s;}
+    .ps.active .ps-num{background:var(--green);border-color:var(--green);color:#fff;}
+    .ps.done .ps-num{background:var(--green);border-color:var(--green);color:#fff;}
+    .ps-label{font-size:.68rem;font-weight:500;color:var(--muted);white-space:nowrap;margin-left:.5rem;transition:color .3s;}
+    .ps.active .ps-label{color:var(--green);font-weight:600;}
+    .ps.done .ps-label{color:var(--green);}
+
+    /* HERO */
+    .page-hero{background:linear-gradient(135deg,var(--dark) 0%,#243d21 100%);padding:3.5rem 3rem 3rem;position:relative;overflow:hidden;}
+    .page-hero::after{content:'REGISTER';position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-size:8rem;font-weight:700;color:rgba(255,255,255,.03);white-space:nowrap;user-select:none;}
+    .hero-inner{max-width:660px;position:relative;z-index:1;}
+    .hero-eyebrow{font-size:.65rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
+    .hero-eyebrow::before{content:'';width:1.25rem;height:1px;background:rgba(255,255,255,.3);}
+    .page-hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:#fff;line-height:1.1;}
+    .page-hero h1 em{font-style:italic;color:rgba(255,255,255,.38);}
+    .page-hero p{margin-top:.9rem;font-size:.88rem;color:rgba(255,255,255,.48);line-height:1.7;max-width:460px;}
+    .pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.25rem;}
+    .pill{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.1);padding:.3rem .75rem;border-radius:999px;}
+
+    /* LAYOUT */
+    .page-body{max-width:1060px;margin:0 auto;padding:2.5rem 3rem 6rem;display:grid;grid-template-columns:1fr 290px;gap:2.25rem;align-items:start;}
+
+    /* FORM CARD */
+    .form-card{background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+    .form-section{display:none;padding:2.5rem 2.75rem;animation:fadeUp .35s ease;}
+    .form-section.active{display:block;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    .sec-tag{font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:.35rem;}
+    .sec-title{font-size:1.65rem;font-weight:700;color:var(--dark);}
+    .sec-desc{font-size:.84rem;color:var(--muted);margin-top:.3rem;line-height:1.65;padding-bottom:1.75rem;border-bottom:1px solid var(--border);margin-bottom:1.75rem;}
+
+    /* FIELDS */
+    .field{margin-bottom:1.4rem;}
+    .field:last-child{margin-bottom:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.4rem;}
+    .flbl{display:block;font-size:.78rem;font-weight:600;color:var(--dark);margin-bottom:.45rem;letter-spacing:.01em;}
+    .flbl .req{color:var(--green);}
+    .flbl .hint{font-weight:400;color:var(--muted);font-size:.72rem;display:block;margin-top:.15rem;line-height:1.5;}
+
+    input[type=text],input[type=email],input[type=tel],input[type=date],textarea{
+      width:100%;padding:.72rem .95rem;background:var(--bg);
+      border:1.5px solid var(--border);border-radius:3px;
+      font-family:'Outfit',sans-serif;font-size:.87rem;color:var(--dark);
+      outline:none;transition:border-color .25s,box-shadow .25s,background .2s;
+    }
+    input[type=date]{cursor:pointer;}
+    input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(45,90,39,.09);background:#fff;}
+    input.err,textarea.err{border-color:var(--error);box-shadow:0 0 0 3px rgba(184,64,64,.07);}
+    textarea{resize:vertical;min-height:90px;}
+    .err-msg{font-size:.71rem;color:var(--error);margin-top:.3rem;display:none;}
+    .err-msg.show{display:block;}
+
+    /* SUB LABEL */
+    .sub-lbl{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:1.6rem 0 .9rem;display:flex;align-items:center;gap:.5rem;}
+    .sub-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    /* RADIO / CHECKBOX OPTIONS */
+    .opt-group{display:flex;flex-direction:column;gap:.5rem;}
+    .opt-item{display:flex;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;background:var(--bg);border:1.5px solid var(--border);border-radius:3px;cursor:pointer;transition:border-color .2s,background .2s;user-select:none;}
+    .opt-item:hover{border-color:var(--green);background:#eef4ed;}
+    .opt-item.selected{border-color:var(--green);background:#eef4ed;}
+    .opt-item input{width:1rem;height:1rem;flex-shrink:0;margin-top:.15rem;accent-color:var(--green);cursor:pointer;}
+    .opt-item .opt-text{flex:1;}
+    .opt-item .opt-title{font-size:.86rem;font-weight:500;color:var(--dark);line-height:1.4;}
+    .opt-item .opt-sub{font-size:.75rem;color:var(--muted);margin-top:.2rem;line-height:1.5;}
+
+    /* CHECKBOX GRID */
+    .cb-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+    .cb-item{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;background:var(--bg);border:1.5px solid var(--border);border-radius:3px;cursor:pointer;transition:border-color .2s,background .2s;user-select:none;}
+    .cb-item:hover{border-color:var(--green);background:#eef4ed;}
+    .cb-item.selected{border-color:var(--green);background:#eef4ed;}
+    .cb-item input{width:.95rem;height:.95rem;flex-shrink:0;accent-color:var(--green);cursor:pointer;}
+    .cb-item span{font-size:.84rem;color:var(--dark);}
+
+    /* NOTE CALLOUT */
+    .note-box{background:#FFF8E7;border:1px solid rgba(139,115,64,.25);border-radius:3px;padding:.9rem 1.1rem;margin-bottom:1.4rem;display:flex;gap:.7rem;align-items:flex-start;}
+    .note-box svg{color:var(--gold);flex-shrink:0;margin-top:1px;}
+    .note-box p{font-size:.8rem;color:var(--amber);line-height:1.6;}
+
+    /* UPLOAD */
+    .upload-zone{border:2px dashed var(--border);border-radius:4px;padding:2rem 1.25rem;text-align:center;cursor:pointer;position:relative;background:var(--bg);transition:border-color .25s,background .25s;}
+    .upload-zone:hover,.upload-zone.drag{border-color:var(--green);background:#eef4ed;}
+    .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .upload-icon{width:2.75rem;height:2.75rem;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;}
+    .upload-title{font-size:.87rem;font-weight:600;color:var(--dark);margin-bottom:.25rem;}
+    .upload-sub{font-size:.76rem;color:var(--muted);line-height:1.55;}
+    .upload-sub strong{color:var(--green);}
+    .file-preview{display:none;align-items:center;gap:.65rem;margin-top:.8rem;padding:.65rem .9rem;background:#eef4ed;border:1px solid rgba(45,90,39,.2);border-radius:3px;}
+    .file-preview.show{display:flex;}
+    .file-preview svg{color:var(--green);flex-shrink:0;}
+    .file-name{font-size:.8rem;font-weight:500;color:var(--dark);flex:1;word-break:break-all;}
+    .file-remove{font-size:.7rem;color:var(--error);cursor:pointer;font-weight:600;background:none;border:none;padding:0;flex-shrink:0;}
+
+    /* CONSENT */
+    .consent-row{display:flex;align-items:flex-start;gap:.75rem;padding:1rem;background:var(--bg);border:1.5px solid var(--border);border-radius:3px;cursor:pointer;transition:border-color .2s;}
+    .consent-row:hover{border-color:var(--green);}
+    .consent-row.selected{border-color:var(--green);background:#eef4ed;}
+    .consent-row input{width:1rem;height:1rem;flex-shrink:0;margin-top:2px;accent-color:var(--green);}
+    .consent-row span{font-size:.81rem;color:var(--dark);line-height:1.65;}
+    .consent-row a{color:var(--green);font-weight:600;}
+
+    /* FORM FOOTER */
+    .form-footer{padding:1.35rem 2.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+    .btn{display:inline-flex;align-items:center;gap:.45rem;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.8rem 1.75rem;border-radius:3px;border:none;cursor:pointer;transition:all .25s;}
+    .btn-primary{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(45,90,39,.22);}
+    .btn-primary:hover{background:var(--green2);transform:translateY(-1px);box-shadow:0 7px 20px rgba(45,90,39,.32);}
+    .btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border);}
+    .btn-ghost:hover{border-color:var(--dark);color:var(--dark);}
+    .form-note{font-size:.72rem;color:var(--muted);}
+
+    /* SUCCESS */
+    .success-screen{display:none;text-align:center;padding:5rem 2.75rem;animation:fadeUp .4s ease;}
+    .success-screen.show{display:block;}
+    .success-icon{width:4.5rem;height:4.5rem;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;box-shadow:0 10px 28px rgba(45,90,39,.25);}
+    .success-screen h2{font-size:2rem;color:var(--dark);}
+    .success-screen p{font-size:.88rem;color:var(--muted);line-height:1.75;max-width:380px;margin:.65rem auto 0;}
+
+    /* SIDEBAR */
+    .sidebar{position:sticky;top:4.5rem;display:flex;flex-direction:column;gap:1.1rem;}
+    .side-card{background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+    .side-head{background:var(--dark);padding:1rem 1.4rem;}
+    .side-head h3{font-size:.88rem;color:#fff;font-weight:600;}
+    .side-body{padding:1rem 1.4rem;}
+    .side-row{display:flex;gap:.65rem;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--border);}
+    .side-row:last-child{border-bottom:none;padding-bottom:0;}
+    .side-icon{color:var(--green);flex-shrink:0;margin-top:1px;}
+    .side-lbl{font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:.12rem;}
+    .side-val{font-size:.82rem;color:var(--dark);font-weight:500;}
+    .help-card{background:linear-gradient(135deg,var(--green),#1b4332);border-radius:4px;padding:1.35rem;text-align:center;}
+    .help-card p{font-size:.78rem;color:rgba(255,255,255,.65);line-height:1.65;}
+    .help-card a{display:inline-block;margin-top:.55rem;font-size:.76rem;font-weight:600;color:#fff;text-decoration:underline;}
+
+    /* RESPONSIVE */
+    @media(max-width:860px){
+      .page-body{grid-template-columns:1fr;padding:2rem 1.25rem 4rem;}
+      .site-header,.page-hero{padding-left:1.25rem;padding-right:1.25rem;}
+      .progress-bar{padding:.9rem 1.25rem;}
+      .form-section{padding:1.75rem 1.25rem;}
+      .form-footer{padding:1.1rem 1.25rem;}
+      .two-col,.cb-grid{grid-template-columns:1fr;}
+      .sidebar{position:static;}
+      .page-hero::after{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <a href="index.html" class="site-logo">TIERRA</a>
+  <a href="index.html" class="back-link">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Back to main page
+  </a>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-steps" id="progress-steps">
+    <div class="ps active" id="ps-1"><div class="ps-num" id="pn-1">1</div><div class="ps-label">Personal Info</div></div>
+    <div class="ps" id="ps-2"><div class="ps-num" id="pn-2">2</div><div class="ps-label">Travel</div></div>
+    <div class="ps" id="ps-3"><div class="ps-num" id="pn-3">3</div><div class="ps-label">Flight Details</div></div>
+    <div class="ps" id="ps-4"><div class="ps-num" id="pn-4">4</div><div class="ps-label">Passport</div></div>
+    <div class="ps" id="ps-5"><div class="ps-num" id="pn-5">5</div><div class="ps-label">Special Req.</div></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">1st Annual Tierra · Indonesia 2026</div>
+    <h1>Participant<br/><em>Registration</em></h1>
+    <p>Complete all sections to secure your spot at TIERRA Meeting 2026. Fields marked * are required.</p>
+    <div class="pills">
+      <span class="pill"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>30 June - 02 July 2026</span>
+      <span class="pill"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>Jakarta, Indonesia</span>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+<div class="form-card">
+
+  <!-- ════════════════════════════════
+       STEP 1 — PERSONAL INFORMATION
+  ════════════════════════════════ -->
+  <div class="form-section active" id="step-1">
+    <div class="sec-tag">Step 1 of 5</div>
+    <div class="sec-title">Personal Information</div>
+    <div class="sec-desc">Please provide your personal details as they appear on your official documents.</div>
+
+    <div class="field">
+      <label class="flbl" for="fullname">Full Name <span class="req">*</span>
+        <span class="hint">As it appears on your passport</span>
+      </label>
+      <input type="text" id="fullname" placeholder="e.g. Budi Santoso"/>
+      <div class="err-msg" id="e-fullname">Please enter your full name.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="org">Organization <span class="req">*</span></label>
+      <input type="text" id="org" placeholder="e.g. Ministry of Environment and Forestry"/>
+      <div class="err-msg" id="e-org">Please enter your organization.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="email">Email Address <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="your@email.com"/>
+      <div class="err-msg" id="e-email">Please enter a valid email address.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="whatsapp">WhatsApp Number <span class="req">*</span>
+        <span class="hint">For emergency coordination during the event — include country code</span>
+      </label>
+      <input type="tel" id="whatsapp" placeholder="+62 812 3456 7890"/>
+      <div class="err-msg" id="e-whatsapp">Please enter your WhatsApp number.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="country">Country of Origin <span class="req">*</span>
+        <span class="hint">For visa classification purposes</span>
+      </label>
+      <input type="text" id="country" placeholder="e.g. Indonesia"/>
+      <div class="err-msg" id="e-country">Please enter your country of origin.</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 2 — TRAVEL ARRANGEMENT
+  ════════════════════════════════ -->
+  <div class="form-section" id="step-2">
+    <div class="sec-tag">Step 2 of 5</div>
+    <div class="sec-title">Travel Arrangement</div>
+    <div class="sec-desc">Let us know how your travel to Jakarta will be arranged so we can prepare accordingly.</div>
+
+    <div class="field">
+      <label class="flbl">How will your flight to the TIERRA Meeting be arranged? <span class="req">*</span></label>
+      <div class="opt-group" id="travel-group">
+        <label class="opt-item">
+          <input type="radio" name="travel" value="sponsored"/>
+          <div class="opt-text">
+            <div class="opt-title">Flight will be sponsored by the organizer</div>
+            <div class="opt-sub">The TIERRA Meeting organizing committee will arrange and cover your flight.</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="travel" value="self"/>
+          <div class="opt-text">
+            <div class="opt-title">I will arrange and pay for my own flight</div>
+            <div class="opt-sub">You will book and fund your own travel to Jakarta independently.</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="travel" value="unsure"/>
+          <div class="opt-text">
+            <div class="opt-title">I am not sure yet</div>
+            <div class="opt-sub">You can update this later — we'll still need some travel details for planning.</div>
+          </div>
+        </label>
+      </div>
+      <div class="err-msg" id="e-travel">Please select a travel arrangement option.</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 3A — SPONSORED FLIGHT DETAILS
+  ════════════════════════════════ -->
+  <div class="form-section" id="step-3-sponsored">
+    <div class="sec-tag">Step 3 of 5</div>
+    <div class="sec-title">Sponsored Flight Details</div>
+    <div class="sec-desc">Please provide your preferred travel details so the organizer can arrange your flight.</div>
+
+    <div class="note-box">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <p>Standard check-in is <strong>17 May 2026</strong> and standard check-out is <strong>22 May 2026</strong>. Please select dates close to these unless you have a specific reason.</p>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="sp-city">City of Departure <span class="req">*</span>
+        <span class="hint">Your primary travel origin city</span>
+      </label>
+      <input type="text" id="sp-city" placeholder="e.g. Nairobi, Kenya"/>
+      <div class="err-msg" id="e-sp-city">Please enter your city of departure.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <label class="flbl" for="sp-arrive">Preferred Arrival Date in Jakarta <span class="req">*</span>
+          <span class="hint">Standard: 17 May 2026</span>
+        </label>
+        <input type="date" id="sp-arrive" min="2026-05-15" max="2026-05-18"/>
+        <div class="err-msg" id="e-sp-arrive">Please select your preferred arrival date.</div>
+      </div>
+      <div>
+        <label class="flbl" for="sp-depart">Preferred Departure Date from Jakarta <span class="req">*</span>
+          <span class="hint">Standard: 22 May 2026</span>
+        </label>
+        <input type="date" id="sp-depart" min="2026-05-22" max="2026-05-25"/>
+        <div class="err-msg" id="e-sp-depart">Please select your preferred departure date.</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="flbl">Flight Flexibility <span class="req">*</span></label>
+      <div class="opt-group" id="flex-group">
+        <label class="opt-item">
+          <input type="radio" name="flex" value="strict"/>
+          <div class="opt-text">
+            <div class="opt-title">Strict — I need exactly these dates</div>
+            <div class="opt-sub">No flexibility on travel dates due to personal or professional commitments.</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="flex" value="flexible-1"/>
+          <div class="opt-text">
+            <div class="opt-title">Flexible by ±1 day</div>
+            <div class="opt-sub">I can adjust my travel dates by up to one day if needed.</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="flex" value="flexible-2"/>
+          <div class="opt-text">
+            <div class="opt-title">Flexible by ±2 days or more</div>
+            <div class="opt-sub">I'm open to adjustments to find the best available flight option.</div>
+          </div>
+        </label>
+      </div>
+      <div class="err-msg" id="e-flex">Please select your flight flexibility.</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 3B — SELF-FUNDED TRAVEL
+  ════════════════════════════════ -->
+  <div class="form-section" id="step-3-self">
+    <div class="sec-tag">Step 3 of 5</div>
+    <div class="sec-title">Self-Funded Travel</div>
+    <div class="sec-desc">Please share your travel dates so we can plan the event schedule and accommodation accordingly.</div>
+
+    <div class="note-box">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <p>Standard check-in is <strong>17 May 2026</strong> and check-out is <strong>22 May 2026</strong>. Please plan your travel around these dates.</p>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="sf-city">City of Departure <span class="req">*</span></label>
+      <input type="text" id="sf-city" placeholder="e.g. Kuala Lumpur, Malaysia"/>
+      <div class="err-msg" id="e-sf-city">Please enter your city of departure.</div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <label class="flbl" for="sf-arrive">Arrival Date in Jakarta <span class="req">*</span></label>
+        <input type="date" id="sf-arrive"/>
+        <div class="err-msg" id="e-sf-arrive">Please select your arrival date.</div>
+      </div>
+      <div>
+        <label class="flbl" for="sf-depart">Departure Date from Jakarta <span class="req">*</span></label>
+        <input type="date" id="sf-depart"/>
+        <div class="err-msg" id="e-sf-depart">Please select your departure date.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 4 — PASSPORT INFORMATION
+  ════════════════════════════════ -->
+  <div class="form-section" id="step-4">
+    <div class="sec-tag">Step 4 of 5</div>
+    <div class="sec-title">Passport Information</div>
+    <div class="sec-desc">Your passport details are required for visa processing and official documentation.</div>
+
+    <div class="note-box">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <p>Your passport must be <strong>valid for at least 6 months</strong> from the event start date (18 May 2026), meaning it must be valid until at least <strong>18 November 2026</strong>.</p>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="passport-num">Passport Number <span class="req">*</span></label>
+      <input type="text" id="passport-num" placeholder="e.g. A1234567" style="text-transform:uppercase;letter-spacing:.05em;"/>
+      <div class="err-msg" id="e-passport-num">Please enter your passport number.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="passport-exp">Passport Expiry Date <span class="req">*</span>
+        <span class="hint">Must be valid until at least 18 November 2026</span>
+      </label>
+      <input type="date" id="passport-exp" min="2026-11-18"/>
+      <div class="err-msg" id="e-passport-exp">Passport must be valid until at least 18 November 2026.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl">Passport Scan <span class="req">*</span>
+        <span class="hint">Upload a clear scan or photo of your passport's data page (PDF or image, max 5MB)</span>
+      </label>
+      <div class="upload-zone" id="pp-zone">
+        <input type="file" id="pp-file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload('pp')"/>
+        <div class="upload-icon">
+          <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10a2 2 0 11-4 0 2 2 0 014 0zM6 10h2M6 14h6"/></svg>
+        </div>
+        <div class="upload-title">Upload passport scan</div>
+        <div class="upload-sub">Drag &amp; drop or <strong>click to browse</strong><br/>PDF · JPG · PNG · Max 5MB</div>
+      </div>
+      <div class="file-preview" id="pp-preview">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span class="file-name" id="pp-fname"></span>
+        <button class="file-remove" onclick="removeUpload('pp')">Remove</button>
+      </div>
+      <div class="err-msg" id="e-pp">Please upload your passport scan.</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STEP 5 — SPECIAL REQUIREMENTS
+  ════════════════════════════════ -->
+  <div class="form-section" id="step-5">
+    <div class="sec-tag">Step 5 of 5</div>
+    <div class="sec-title">Special Requirements</div>
+    <div class="sec-desc">Help us make your experience as comfortable as possible by sharing any special needs.</div>
+
+    <div class="field">
+      <label class="flbl">Dietary Requirements <span class="req">*</span></label>
+      <div class="cb-grid" id="diet-group">
+        <label class="cb-item"><input type="checkbox" name="diet" value="no-restriction"/><span>No restrictions</span></label>
+        <label class="cb-item"><input type="checkbox" name="diet" value="vegetarian"/><span>Vegetarian</span></label>
+        <label class="cb-item"><input type="checkbox" name="diet" value="vegan"/><span>Vegan</span></label>
+        <label class="cb-item"><input type="checkbox" name="diet" value="halal"/><span>Halal only</span></label>
+        <label class="cb-item"><input type="checkbox" name="diet" value="gluten-free"/><span>Gluten-free</span></label>
+        <label class="cb-item"><input type="checkbox" name="diet" value="nut-allergy"/><span>Nut allergy</span></label>
+        <label class="cb-item"><input type="checkbox" name="diet" value="dairy-free"/><span>Dairy-free</span></label>
+        <label class="cb-item"><input type="checkbox" name="diet" value="kosher"/><span>Kosher</span></label>
+      </div>
+      <div class="err-msg" id="e-diet">Please select at least one dietary option.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl">Do you plan to participate in the Field Visit on Day 4 (21 May)? <span class="req">*</span></label>
+      <div class="opt-group" id="field-visit-group">
+        <label class="opt-item">
+          <input type="radio" name="field-visit" value="yes"/>
+          <div class="opt-text">
+            <div class="opt-title">Yes, I will join the Field Visit</div>
+            <div class="opt-sub">I confirm my participation in the Day 4 field visit on 21 May 2026.</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="field-visit" value="no"/>
+          <div class="opt-text">
+            <div class="opt-title">No, I will not join the Field Visit</div>
+            <div class="opt-sub">I will not be participating in the field visit on that day.</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="field-visit" value="maybe"/>
+          <div class="opt-text">
+            <div class="opt-title">Undecided — I'll confirm later</div>
+            <div class="opt-sub">I'm not sure yet. I understand I may need to confirm closer to the event.</div>
+          </div>
+        </label>
+      </div>
+      <div class="err-msg" id="e-field-visit">Please select an option for the field visit.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="special-needs">Special Needs or Specific Accommodations
+        <span class="hint">Optional — e.g. mobility issues, medical considerations, dietary specifics not listed above</span>
+      </label>
+      <textarea id="special-needs" placeholder="Please describe any special requirements or accommodations you may need..."></textarea>
+    </div>
+
+    <div style="margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+      <label class="consent-row" id="consent-row">
+        <input type="checkbox" id="consent" onchange="this.closest('.consent-row').classList.toggle('selected',this.checked);document.getElementById('e-consent').classList.remove('show');"/>
+        <span>I confirm that all information provided is accurate and complete. I agree to the <a href="#">Terms &amp; Conditions</a> and <a href="#">Privacy Policy</a> of TIERRA Meeting 2026. <span style="color:var(--green)">*</span></span>
+      </label>
+      <div class="err-msg" id="e-consent">You must agree to the terms to submit your registration.</div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="success">
+    <div class="success-icon">
+      <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2>You're Registered!</h2>
+    <p>Thank you for registering for the 3rd TIERRA Meeting Indonesia. A confirmation email will be sent to your inbox within 24 hours.</p>
+    <p style="margin-top:.75rem;font-size:.78rem;color:var(--gold);">18–22 May 2026 · Jakarta, Indonesia</p>
+    <a href="tierra-meeting-final.html" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:1.75rem;background:var(--green);color:#fff;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.85rem 2rem;border-radius:3px;text-decoration:none;box-shadow:0 4px 14px rgba(45,90,39,.22);transition:background .25s;" onmouseover="this.style.background='var(--green2)'" onmouseout="this.style.background='var(--green)'">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Main Page
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="form-footer" id="form-footer">
+    <button class="btn btn-ghost" id="btn-back" onclick="prevStep()" style="display:none;">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back
+    </button>
+    <span class="form-note" id="step-counter">Step 1 of 5</span>
+    <button class="btn btn-primary" id="btn-next" onclick="nextStep()">
+      Continue
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+</div><!-- /form-card -->
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="side-card">
+    <div class="side-head"><h3>Event Details</h3></div>
+    <div class="side-body">
+      <div class="side-row">
+        <div class="side-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <div><div class="side-lbl">Event Dates</div><div class="side-val">30 June - 02 July 2026</div></div>
+      </div>
+      <div class="side-row">
+        <div class="side-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+        <div><div class="side-lbl">Location</div><div class="side-val">Jakarta, Indonesia</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="help-card">
+    <p>Need help completing your registration? Our team is ready to assist.</p>
+    <a href="mailto:info@tierrameeting.org">info@tierrameeting.org</a>
+  </div>
+</aside>
+</div><!-- /page-body -->
+
+<script>
+  // ── State ──
+  let currentStep = 1;
+  let travelChoice = null; // 'sponsored' | 'self' | 'unsure'
+
+  // Steps flow:
+  // 1 → 2 → 3a (sponsored) OR 3b (self/unsure) → 4 → 5
+  // Visual step IDs: step-1, step-2, step-3-sponsored, step-3-self, step-4, step-5
+
+  const FLOW_SPONSORED = ['step-1','step-2','step-3-sponsored','step-4','step-5'];
+  const FLOW_SELF      = ['step-1','step-2','step-3-self','step-4','step-5'];
+  const LABELS_SPONSORED = ['Personal Info','Travel','Sponsored Flight','Passport','Special Req.'];
+  const LABELS_SELF      = ['Personal Info','Travel','Self-Funded Travel','Passport','Special Req.'];
+
+  function getFlow() {
+    return travelChoice === 'sponsored' ? FLOW_SPONSORED : FLOW_SELF;
+  }
+
+  // ── Progress UI ──
+  function updateProgress() {
+    const labels = travelChoice === 'sponsored' ? LABELS_SPONSORED : LABELS_SELF;
+    for (let i = 1; i <= 5; i++) {
+      const ps = document.getElementById('ps-' + i);
+      const pn = document.getElementById('pn-' + i);
+      const lbl = ps.querySelector('.ps-label');
+      if (labels[i-1]) lbl.textContent = labels[i-1];
+      ps.classList.remove('active','done');
+      if (i === currentStep) ps.classList.add('active');
+      else if (i < currentStep) {
+        ps.classList.add('done');
+        pn.innerHTML = '<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+      } else {
+        pn.textContent = i;
+      }
+    }
+    document.getElementById('btn-back').style.display = currentStep > 1 ? 'flex' : 'none';
+    const isLast = currentStep === 5;
+    const btn = document.getElementById('btn-next');
+    btn.innerHTML = isLast
+      ? 'Submit Registration <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>'
+      : 'Continue <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    document.getElementById('step-counter').textContent = 'Step ' + currentStep + ' of 5';
+
+    // Sidebar progress
+    const sideLabels = ['Personal Information','Travel Arrangement','Flight Details','Passport Information','Special Requirements'];
+    for (let i = 1; i <= 5; i++) {
+      const sp = document.getElementById('sp-' + i);
+      if (i < currentStep) {
+        sp.style.color = 'var(--green)';
+        sp.style.fontWeight = '600';
+        sp.firstElementChild.style.background = 'var(--green)';
+        sp.firstElementChild.style.border = 'none';
+        sp.firstElementChild.innerHTML = '<svg width="8" height="8" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+      } else if (i === currentStep) {
+        sp.style.color = 'var(--dark)';
+        sp.style.fontWeight = '600';
+        sp.firstElementChild.style.background = 'transparent';
+        sp.firstElementChild.style.border = '2px solid var(--green)';
+        sp.firstElementChild.innerHTML = '';
+      } else {
+        sp.style.color = 'var(--muted)';
+        sp.style.fontWeight = '400';
+        sp.firstElementChild.style.background = 'transparent';
+        sp.firstElementChild.style.border = '1.5px solid var(--border)';
+        sp.firstElementChild.innerHTML = '';
+      }
+    }
+  }
+
+  function showSection(id) {
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  function getSectionId() {
+    const flow = getFlow();
+    return flow[currentStep - 1];
+  }
+
+  // ── Validation ──
+  function chk(id, errId, fn) {
+    const el = document.getElementById(id);
+    if (!el) return true;
+    const err = document.getElementById(errId);
+    const ok = fn(el);
+    el.classList.toggle('err', !ok);
+    if (err) err.classList.toggle('show', !ok);
+    return ok;
+  }
+
+  function validateStep() {
+    let ok = true;
+    if (currentStep === 1) {
+      ok = chk('fullname','e-fullname', el => el.value.trim().length > 0) && ok;
+      ok = chk('org','e-org', el => el.value.trim().length > 0) && ok;
+      ok = chk('email','e-email', el => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) && ok;
+      ok = chk('whatsapp','e-whatsapp', el => el.value.trim().length > 0) && ok;
+      ok = chk('country','e-country', el => el.value.trim().length > 0) && ok;
+    }
+    else if (currentStep === 2) {
+      const travel = document.querySelector('input[name="travel"]:checked');
+      const tErr = document.getElementById('e-travel');
+      if (!travel) { tErr.classList.add('show'); ok = false; }
+      else { tErr.classList.remove('show'); travelChoice = travel.value; }
+    }
+    else if (currentStep === 3) {
+      if (travelChoice === 'sponsored') {
+        ok = chk('sp-city','e-sp-city', el => el.value.trim().length > 0) && ok;
+        ok = chk('sp-arrive','e-sp-arrive', el => el.value.length > 0) && ok;
+        ok = chk('sp-depart','e-sp-depart', el => el.value.length > 0) && ok;
+        const flex = document.querySelector('input[name="flex"]:checked');
+        const fErr = document.getElementById('e-flex');
+        if (!flex) { fErr.classList.add('show'); ok = false; } else fErr.classList.remove('show');
+      } else {
+        ok = chk('sf-city','e-sf-city', el => el.value.trim().length > 0) && ok;
+        ok = chk('sf-arrive','e-sf-arrive', el => el.value.length > 0) && ok;
+        ok = chk('sf-depart','e-sf-depart', el => el.value.length > 0) && ok;
+      }
+    }
+    else if (currentStep === 4) {
+      ok = chk('passport-num','e-passport-num', el => el.value.trim().length > 0) && ok;
+      ok = chk('passport-exp','e-passport-exp', el => el.value.length > 0 && el.value >= '2026-11-18') && ok;
+      const ppFile = document.getElementById('pp-file');
+      const ppErr = document.getElementById('e-pp');
+      if (!ppFile.files || ppFile.files.length === 0) { ppErr.classList.add('show'); ok = false; } else ppErr.classList.remove('show');
+    }
+    else if (currentStep === 5) {
+      const diets = document.querySelectorAll('input[name="diet"]:checked');
+      const dErr = document.getElementById('e-diet');
+      if (diets.length === 0) { dErr.classList.add('show'); ok = false; } else dErr.classList.remove('show');
+      const fv = document.querySelector('input[name="field-visit"]:checked');
+      const fvErr = document.getElementById('e-field-visit');
+      if (!fv) { fvErr.classList.add('show'); ok = false; } else fvErr.classList.remove('show');
+      const consent = document.getElementById('consent');
+      const cErr = document.getElementById('e-consent');
+      if (!consent.checked) { cErr.classList.add('show'); ok = false; } else cErr.classList.remove('show');
+    }
+    if (!ok) {
+      const firstErr = document.querySelector('.err-msg.show');
+      if (firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+    return ok;
+  }
+
+  function nextStep() {
+    if (!validateStep()) return;
+    if (currentStep === 5) {
+      // Submit
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('form-footer').style.display = 'none';
+      document.getElementById('success').classList.add('show');
+      // mark all done
+      for (let i = 1; i <= 5; i++) {
+        const ps = document.getElementById('ps-' + i);
+        const pn = document.getElementById('pn-' + i);
+        ps.classList.remove('active'); ps.classList.add('done');
+        pn.innerHTML = '<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+      }
+      window.scrollTo({ top:0, behavior:'smooth' });
+      return;
+    }
+    currentStep++;
+    showSection(getSectionId());
+    updateProgress();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  function prevStep() {
+    if (currentStep <= 1) return;
+    currentStep--;
+    showSection(getSectionId());
+    updateProgress();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // ── Upload handlers ──
+  function handleUpload(key) {
+    const file = document.getElementById(key + '-file').files[0];
+    if (!file) return;
+    document.getElementById(key + '-fname').textContent = file.name;
+    document.getElementById(key + '-preview').classList.add('show');
+    document.getElementById(key + '-zone').style.borderColor = 'var(--green)';
+    const err = document.getElementById('e-' + key);
+    if (err) err.classList.remove('show');
+  }
+  function removeUpload(key) {
+    document.getElementById(key + '-file').value = '';
+    document.getElementById(key + '-preview').classList.remove('show');
+    document.getElementById(key + '-zone').style.borderColor = '';
+  }
+
+  // ── Drag highlight ──
+  document.querySelectorAll('.upload-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', () => zone.classList.remove('drag'));
+  });
+
+  // ── Choice highlighting ──
+  document.querySelectorAll('.opt-item input,.cb-item input').forEach(input => {
+    input.addEventListener('change', () => {
+      if (input.type === 'radio') {
+        document.querySelectorAll('input[name="' + input.name + '"]').forEach(r => {
+          r.closest('.opt-item, .cb-item').classList.remove('selected');
+        });
+      }
+      if (input.checked) input.closest('.opt-item, .cb-item').classList.add('selected');
+      else input.closest('.opt-item, .cb-item').classList.remove('selected');
+
+      // clear related errors
+      const errs = { travel:'e-travel', flex:'e-flex', 'field-visit':'e-field-visit', diet:'e-diet' };
+      if (errs[input.name]) document.getElementById(errs[input.name]).classList.remove('show');
+    });
+  });
+
+  // ── Init ──
+  updateProgress();
+</script>
+</body>
+</html>
