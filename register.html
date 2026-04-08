@@ -138,6 +138,9 @@
     .btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border);}
     .btn-ghost:hover{border-color:var(--dark);color:var(--dark);}
     .form-note{font-size:.72rem;color:var(--muted);}
+    .submit-error{display:none;margin:1rem 2.75rem 0;padding:.9rem 1rem;background:#fff5f5;border:1px solid rgba(184,64,64,.22);border-radius:3px;color:var(--error);font-size:.8rem;line-height:1.6;}
+    .submit-error.show{display:block;}
+    .btn[disabled]{opacity:.7;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
 
     /* SUCCESS */
     .success-screen{display:none;text-align:center;padding:5rem 2.75rem;animation:fadeUp .4s ease;}
@@ -145,6 +148,18 @@
     .success-icon{width:4.5rem;height:4.5rem;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;box-shadow:0 10px 28px rgba(45,90,39,.25);}
     .success-screen h2{font-size:2rem;color:var(--dark);}
     .success-screen p{font-size:.88rem;color:var(--muted);line-height:1.75;max-width:380px;margin:.65rem auto 0;}
+
+    /* REVIEW */
+    .review-card{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1.15rem 1.2rem;margin-bottom:1rem;}
+    .review-card:last-child{margin-bottom:0;}
+    .review-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.85rem;padding-bottom:.7rem;border-bottom:1px solid var(--border);}
+    .review-head h3{font-size:1.05rem;color:var(--dark);}
+    .review-edit{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);background:none;border:none;cursor:pointer;}
+    .review-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1.2rem;}
+    .review-item{min-width:0;}
+    .review-item.full{grid-column:1 / -1;}
+    .review-label{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
+    .review-value{font-size:.86rem;color:var(--dark);line-height:1.6;word-break:break-word;}
 
     /* SIDEBAR */
     .sidebar{position:sticky;top:4.5rem;display:flex;flex-direction:column;gap:1.1rem;}
@@ -193,6 +208,7 @@
     <div class="ps" id="ps-3"><div class="ps-num" id="pn-3">3</div><div class="ps-label">Flight Details</div></div>
     <div class="ps" id="ps-4"><div class="ps-num" id="pn-4">4</div><div class="ps-label">Passport</div></div>
     <div class="ps" id="ps-5"><div class="ps-num" id="pn-5">5</div><div class="ps-label">Special Req.</div></div>
+    <div class="ps" id="ps-6"><div class="ps-num" id="pn-6">6</div><div class="ps-label">Review</div></div>
   </div>
 </div>
 
@@ -242,11 +258,11 @@
     </div>
 
     <div class="field">
-      <label class="flbl" for="whatsapp">WhatsApp Number <span class="req">*</span>
+      <label class="flbl" for="whatsapp">Signal Number <span class="req">*</span>
         <span class="hint">For emergency coordination during the event — include country code</span>
       </label>
       <input type="tel" id="whatsapp" placeholder="+62 812 3456 7890"/>
-      <div class="err-msg" id="e-whatsapp">Please enter your WhatsApp number.</div>
+      <div class="err-msg" id="e-whatsapp">Please enter your Signal number.</div>
     </div>
 
     <div class="field">
@@ -268,7 +284,7 @@
 
     <div class="field">
       <label class="flbl">How will your flight to the TIERRA Meeting be arranged? <span class="req">*</span></label>
-      <div class="opt-group" id="travel-group">
+      <div class="opt-group" id="travel-arrangement-group">
         <label class="opt-item">
           <input type="radio" name="travel" value="sponsored"/>
           <div class="opt-text">
@@ -283,16 +299,122 @@
             <div class="opt-sub">You will book and fund your own travel to Jakarta independently.</div>
           </div>
         </label>
-        <label class="opt-item">
-          <input type="radio" name="travel" value="unsure"/>
-          <div class="opt-text">
-            <div class="opt-title">I am not sure yet</div>
-            <div class="opt-sub">You can update this later — we'll still need some travel details for planning.</div>
-          </div>
-        </label>
       </div>
       <div class="err-msg" id="e-travel">Please select a travel arrangement option.</div>
     </div>
+
+    <div id="sponsored-flight-extra-fields" style="display:none;">
+      <div class="field">
+        <label class="flbl" for="special-flight-requests">Do you have any special flight requests? <span class="req">*</span>
+          <span class="hint">Airline preferences, specific routes, special needs during the flight</span>
+        </label>
+        <input type="text" id="special-flight-requests" placeholder="e.g. Window seat, avoid red-eye flight, vegetarian meal"/>
+        <div class="err-msg" id="e-special-flight-requests">Please enter your special flight requests.</div>
+      </div>
+      <div class="field">
+        <label class="flbl" for="frequent-flyer-number">Frequent Flyer Number <span class="req">*</span></label>
+        <input type="text" id="frequent-flyer-number" placeholder="e.g. 123456789"/>
+        <div class="err-msg" id="e-frequent-flyer-number">Please enter your frequent flyer number.</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="flbl">Accommodation Preference <span class="req">*</span></label>
+      <div class="opt-group" id="accommodation-group">
+        <label class="opt-item">
+          <input type="radio" name="accommodation" value="sponsored"/>
+          <div class="opt-text">
+            <div class="opt-title">Fully arranged by organizer</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="accommodation" value="self"/>
+          <div class="opt-text">
+            <div class="opt-title">Self-funded accommodation</div>
+            <div class="opt-sub">You will book and fund your own accommodation in Jakarta independently.</div>
+          </div>
+        </label>
+      </div>
+      <div class="err-msg" id="e-accommodation">Please select an accommodation preference.</div>
+
+      <div id="selfFundedField" style="display: none; margin-top: 12px;">
+        <div class="field" style="margin-bottom: 1rem;">
+          <label class="flbl" for="nearby-hotel-choice">Preferred Hotel Near Morrissey Hotel <span class="req">*</span>
+            <span class="hint">Choose one of the nearby hotel options if you will arrange your own accommodation.</span>
+          </label>
+          <div class="opt-group" id="nearby-hotel-group">
+            <label class="opt-item">
+              <input type="radio" name="nearby-hotel" value="Ashley Tang Menteng Jakarta"/>
+              <div class="opt-text">
+                <div class="opt-title">Ashley Tang Menteng Jakarta</div>
+                <div class="opt-sub">Popular hotel option near Morrissey Hotel.</div>
+              </div>
+            </label>
+            <label class="opt-item">
+              <input type="radio" name="nearby-hotel" value="Stanley Wahid Hasyim Jakarta"/>
+              <div class="opt-text">
+                <div class="opt-title">Stanley Wahid Hasyim Jakarta</div>
+                <div class="opt-sub">Located in the same Menteng area and close to the venue.</div>
+              </div>
+            </label>
+            <label class="opt-item">
+              <input type="radio" name="nearby-hotel" value="All Seasons Jakarta Thamrin"/>
+              <div class="opt-text">
+                <div class="opt-title">All Seasons Jakarta Thamrin</div>
+                <div class="opt-sub">Another nearby hotel option with easy access to Morrissey Hotel.</div>
+              </div>
+            </label>
+            <label class="opt-item">
+              <input type="radio" name="nearby-hotel" value="I will choose another nearby hotel"/>
+              <div class="opt-text">
+                <div class="opt-title">I will choose another nearby hotel</div>
+                <div class="opt-sub">Select this if you prefer another hotel near Morrissey Hotel.</div>
+              </div>
+            </label>
+          </div>
+          <div class="err-msg" id="e-nearby-hotel">Please select a nearby hotel option.</div>
+        </div>
+
+        <div class="field">
+          <label class="flbl">Accommodation Details <span class="req">*</span></label>
+          <textarea 
+            id="selfFundedInput"
+            placeholder="Please provide your accommodation details (hotel name, location, duration, booking notes, etc.)"
+            style="width: 100%; min-height: 100px;"
+          ></textarea>
+          <div class="err-msg" id="e-selfFunded">Please provide your accommodation details.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field" id="roomTypeField" style="display: none;">
+      <label class="flbl">Preferred Room Type <span class="req">*</span>
+        <span class="hint">This will be used for both self-funded and organizer-arranged accommodation.</span>
+      </label>
+      <div class="opt-group" id="room-type-group">
+        <label class="opt-item">
+          <input type="radio" name="room-type" value="double bed"/>
+          <div class="opt-text">
+            <div class="opt-title">Double Bed</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="room-type" value="twin bed"/>
+          <div class="opt-text">
+            <div class="opt-title">Twin Bed</div>
+          </div>
+        </label>
+      </div>
+      <div class="err-msg" id="e-room-type">Please select your preferred room type.</div>
+    </div>
+
+    <div class="field">
+      <label class="flbl" for="special-accommodation-requests">Do you have any special accommodation requests? <span class="req">*</span>
+      </label>
+      <input type="text" id="special-accommodation-requests" placeholder="e.g. Lower floor room due to height phobia, quiet room, near elevator, or other accommodation requests"/>
+      <div class="err-msg" id="e-special-accommodation-requests">Please enter your accommodation requests. If none, type N/A.</div>
+    </div>
+    
   </div>
 
   <!-- ════════════════════════════════
@@ -309,11 +431,11 @@
     </div>
 
     <div class="field">
-      <label class="flbl" for="sp-city">City of Departure <span class="req">*</span>
+      <label class="flbl" for="sponsored-city-departure">City of Departure <span class="req">*</span>
         <span class="hint">Your primary travel origin city</span>
       </label>
-      <input type="text" id="sp-city" placeholder="e.g. Nairobi, Kenya"/>
-      <div class="err-msg" id="e-sp-city">Please enter your city of departure.</div>
+      <input type="text" id="sponsored-city-departure" placeholder="e.g. Nairobi, Kenya"/>
+      <div class="err-msg" id="e-sponsored-city-departure">Please enter your city of departure.</div>
     </div>
 
     <div class="two-col">
@@ -453,7 +575,8 @@
 
     <div class="field">
       <label class="flbl">Dietary Requirements <span class="req">*</span></label>
-      <div class="cb-grid" id="diet-group">
+      <div class="cb-grid" id="diet-g
+      roup">
         <label class="cb-item"><input type="checkbox" name="diet" value="no-restriction"/><span>No restrictions</span></label>
         <label class="cb-item"><input type="checkbox" name="diet" value="vegetarian"/><span>Vegetarian</span></label>
         <label class="cb-item"><input type="checkbox" name="diet" value="vegan"/><span>Vegan</span></label>
@@ -467,13 +590,13 @@
     </div>
 
     <div class="field">
-      <label class="flbl">Do you plan to participate in the Field Visit on Day 4 (21 May)? <span class="req">*</span></label>
+      <label class="flbl">Do you plan to participate in the Field Visit on Day 4 (3 July)? <span class="req">*</span></label>
       <div class="opt-group" id="field-visit-group">
         <label class="opt-item">
           <input type="radio" name="field-visit" value="yes"/>
           <div class="opt-text">
             <div class="opt-title">Yes, I will join the Field Visit</div>
-            <div class="opt-sub">I confirm my participation in the Day 4 field visit on 21 May 2026.</div>
+            <div class="opt-sub">I confirm my participation in the Day 4 field visit on 3 July 2026.</div>
           </div>
         </label>
         <label class="opt-item">
@@ -494,6 +617,33 @@
       <div class="err-msg" id="e-field-visit">Please select an option for the field visit.</div>
     </div>
 
+     <div class="field">
+      <label class="flbl">Do you have any accessibility needs or disabilities? <span class="req">*</span></label>
+      <div class="opt-group" id="accessibility-group">
+        <label class="opt-item">
+          <input type="radio" name="accessibility-needs" value="yes"/>
+          <div class="opt-text">
+            <div class="opt-title">Yes</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="accessibility-needs" value="no"/>
+          <div class="opt-text">
+            <div class="opt-title">No</div>
+          </div>
+        </label>
+      </div>
+      <div class="err-msg" id="e-accessibility-needs">Please select an option for accessibility needs.</div>
+    </div>
+
+    <div class="field" id="accessibility-details-field" style="display:none;">
+      <label class="flbl" for="accessibility-details">Accessibility Support Details <span class="req">*</span>
+        <span class="hint">Please tell us the disability support you need, for example wheelchair assistance, walking cane support, accessible room access, or other mobility aids.</span>
+      </label>
+      <textarea id="accessibility-details" placeholder="Example: I need wheelchair assistance from arrival to departure, step-free room access, and a shower chair if available."></textarea>
+      <div class="err-msg" id="e-accessibility-details">Please provide your accessibility support details.</div>
+    </div>
+
     <div class="field">
       <label class="flbl" for="special-needs">Special Needs or Specific Accommodations
         <span class="hint">Optional — e.g. mobility issues, medical considerations, dietary specifics not listed above</span>
@@ -510,19 +660,68 @@
     </div>
   </div>
 
+  <!-- STEP 6 - REVIEW -->
+  <div class="form-section" id="step-6">
+    <div class="sec-tag">Step 6 of 6</div>
+    <div class="sec-title">Review Your Registration</div>
+    <div class="sec-desc">Please review all details below before submitting your registration. Use the edit buttons if you need to go back and update any section.</div>
+
+    <div class="review-card">
+      <div class="review-head">
+        <h3>Personal Information</h3>
+        <button type="button" class="review-edit" onclick="goToReviewStep(1)">Edit</button>
+      </div>
+      <div class="review-grid" id="review-personal"></div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-head">
+        <h3>Travel & Accommodation</h3>
+        <button type="button" class="review-edit" onclick="goToReviewStep(2)">Edit</button>
+      </div>
+      <div class="review-grid" id="review-travel"></div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-head">
+        <h3>Flight Details</h3>
+        <button type="button" class="review-edit" onclick="goToReviewStep(3)">Edit</button>
+      </div>
+      <div class="review-grid" id="review-flight"></div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-head">
+        <h3>Passport Information</h3>
+        <button type="button" class="review-edit" onclick="goToReviewStep(4)">Edit</button>
+      </div>
+      <div class="review-grid" id="review-passport"></div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-head">
+        <h3>Special Requirements</h3>
+        <button type="button" class="review-edit" onclick="goToReviewStep(5)">Edit</button>
+      </div>
+      <div class="review-grid" id="review-special"></div>
+    </div>
+  </div>
+
   <!-- SUCCESS -->
   <div class="success-screen" id="success">
     <div class="success-icon">
       <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
     <h2>You're Registered!</h2>
-    <p>Thank you for registering for the 3rd TIERRA Meeting Indonesia. A confirmation email will be sent to your inbox within 24 hours.</p>
-    <p style="margin-top:.75rem;font-size:.78rem;color:var(--gold);">18–22 May 2026 · Jakarta, Indonesia</p>
-    <a href="tierra-meeting-final.html" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:1.75rem;background:var(--green);color:#fff;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.85rem 2rem;border-radius:3px;text-decoration:none;box-shadow:0 4px 14px rgba(45,90,39,.22);transition:background .25s;" onmouseover="this.style.background='var(--green2)'" onmouseout="this.style.background='var(--green)'">
+    <p>Thank you for registering for the 3rd TIERRA Meeting Indonesia. A confirmation email with your registration summary has been sent to your inbox.</p>
+    <p style="margin-top:.75rem;font-size:.78rem;color:var(--gold);">30 June – 2 July 2026 · Jakarta, Indonesia</p>
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:1.75rem;background:var(--green);color:#fff;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.85rem 2rem;border-radius:3px;text-decoration:none;box-shadow:0 4px 14px rgba(45,90,39,.22);transition:background .25s;" onmouseover="this.style.background='var(--green2)'" onmouseout="this.style.background='var(--green)'">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Back to Main Page
     </a>
   </div>
+
+  <div class="submit-error" id="submit-error">Sorry, your registration could not be submitted yet. Please try again.</div>
 
   <!-- FOOTER -->
   <div class="form-footer" id="form-footer">
@@ -564,16 +763,18 @@
 <script>
   // ── State ──
   let currentStep = 1;
+  let isSubmitting = false;
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4u7pLSzlwHSTIxtIpjGMi45Pxr2TiuDdEieKhRqiNfqI6zdAa-JniBkgPvYAGVXlq/exec";
   let travelChoice = null; // 'sponsored' | 'self' | 'unsure'
 
   // Steps flow:
   // 1 → 2 → 3a (sponsored) OR 3b (self/unsure) → 4 → 5
   // Visual step IDs: step-1, step-2, step-3-sponsored, step-3-self, step-4, step-5
 
-  const FLOW_SPONSORED = ['step-1','step-2','step-3-sponsored','step-4','step-5'];
-  const FLOW_SELF      = ['step-1','step-2','step-3-self','step-4','step-5'];
-  const LABELS_SPONSORED = ['Personal Info','Travel','Sponsored Flight','Passport','Special Req.'];
-  const LABELS_SELF      = ['Personal Info','Travel','Self-Funded Travel','Passport','Special Req.'];
+  const FLOW_SPONSORED = ['step-1','step-2','step-3-sponsored','step-4','step-5','step-6'];
+  const FLOW_SELF      = ['step-1','step-2','step-3-self','step-4','step-5','step-6'];
+  const LABELS_SPONSORED = ['Personal Info','Travel','Sponsored Flight','Passport','Special Req.','Review'];
+  const LABELS_SELF      = ['Personal Info','Travel','Self-Funded Travel','Passport','Special Req.','Review'];
 
   function getFlow() {
     return travelChoice === 'sponsored' ? FLOW_SPONSORED : FLOW_SELF;
@@ -582,11 +783,12 @@
   // ── Progress UI ──
   function updateProgress() {
     const labels = travelChoice === 'sponsored' ? LABELS_SPONSORED : LABELS_SELF;
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 6; i++) {
       const ps = document.getElementById('ps-' + i);
       const pn = document.getElementById('pn-' + i);
+      if (!ps || !pn) continue;
       const lbl = ps.querySelector('.ps-label');
-      if (labels[i-1]) lbl.textContent = labels[i-1];
+      if (labels[i-1] && lbl) lbl.textContent = labels[i-1];
       ps.classList.remove('active','done');
       if (i === currentStep) ps.classList.add('active');
       else if (i < currentStep) {
@@ -597,17 +799,16 @@
       }
     }
     document.getElementById('btn-back').style.display = currentStep > 1 ? 'flex' : 'none';
-    const isLast = currentStep === 5;
+    const isReview = currentStep === 6;
     const btn = document.getElementById('btn-next');
-    btn.innerHTML = isLast
+    btn.innerHTML = isReview
       ? 'Submit Registration <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>'
       : 'Continue <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-    document.getElementById('step-counter').textContent = 'Step ' + currentStep + ' of 5';
+    document.getElementById('step-counter').textContent = 'Step ' + currentStep + ' of 6';
 
-    // Sidebar progress
-    const sideLabels = ['Personal Information','Travel Arrangement','Flight Details','Passport Information','Special Requirements'];
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 6; i++) {
       const sp = document.getElementById('sp-' + i);
+      if (!sp || !sp.firstElementChild) continue;
       if (i < currentStep) {
         sp.style.color = 'var(--green)';
         sp.style.fontWeight = '600';
@@ -641,6 +842,166 @@
     return flow[currentStep - 1];
   }
 
+  //Conditional Logic
+  const accOptions = document.querySelectorAll('input[name="accommodation"]');
+  const selfField = document.getElementById('selfFundedField');
+  const selfInput = document.getElementById('selfFundedInput');
+  const roomTypeField = document.getElementById('roomTypeField');
+
+  function toggleAccommodationFields() {
+    const selectedAccommodation = document.querySelector('input[name="accommodation"]:checked');
+    const isSelf = selectedAccommodation && selectedAccommodation.value === 'self';
+    const hasSelection = !!selectedAccommodation;
+
+    selfField.style.display = isSelf ? 'block' : 'none';
+    roomTypeField.style.display = hasSelection ? 'block' : 'none';
+
+    if (!isSelf) {
+      selfInput.value = '';
+      selfInput.classList.remove('err');
+      document.getElementById('e-selfFunded').classList.remove('show');
+      document.querySelectorAll('input[name="nearby-hotel"]').forEach(r => {
+        r.checked = false;
+        const item = r.closest('.opt-item');
+        if (item) item.classList.remove('selected');
+      });
+      document.getElementById('e-nearby-hotel').classList.remove('show');
+    }
+
+    if (!hasSelection) {
+      document.querySelectorAll('input[name="room-type"]').forEach(r => {
+        r.checked = false;
+        const item = r.closest('.opt-item');
+        if (item) item.classList.remove('selected');
+      });
+      document.getElementById('e-room-type').classList.remove('show');
+    }
+  }
+
+  accOptions.forEach(option => {
+    option.addEventListener('change', toggleAccommodationFields);
+  });
+
+  function toggleAccessibilityDetails() {
+    const selected = document.querySelector('input[name="accessibility-needs"]:checked');
+    const wrap = document.getElementById('accessibility-details-field');
+    const details = document.getElementById('accessibility-details');
+    if (!wrap || !details) return;
+    const show = selected && selected.value === 'yes';
+    wrap.style.display = show ? 'block' : 'none';
+    if (!show) {
+      details.value = '';
+      details.classList.remove('err');
+      document.getElementById('e-accessibility-details').classList.remove('show');
+    }
+  }
+
+  function getCheckedValue(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '-';
+  }
+
+  function getCheckedLabels(name) {
+    const items = [...document.querySelectorAll(`input[name="${name}"]:checked`)];
+    return items.length ? items.map(item => item.closest('label').innerText.replace(/\s+/g, ' ').trim()).join(', ') : '-';
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '-')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function reviewItem(label, value, full = false) {
+    return `<div class="review-item${full ? ' full' : ''}"><div class="review-label">${escapeHtml(label)}</div><div class="review-value">${escapeHtml(value || '-').replace(/\n/g, '<br/>')}</div></div>`;
+  }
+
+  function populateReview() {
+    const personal = document.getElementById('review-personal');
+    const travel = document.getElementById('review-travel');
+    const flight = document.getElementById('review-flight');
+    const passport = document.getElementById('review-passport');
+    const special = document.getElementById('review-special');
+    const accommodation = getCheckedValue('accommodation');
+    const roomType = getCheckedValue('room-type');
+    const travelArrangement = getCheckedValue('travel');
+
+    if (personal) personal.innerHTML = [
+      reviewItem('Full Name', document.getElementById('fullname').value),
+      reviewItem('Organization', document.getElementById('org').value),
+      reviewItem('Email Address', document.getElementById('email').value),
+      reviewItem('Signal Number', document.getElementById('whatsapp').value),
+      reviewItem('Country of Origin', document.getElementById('country').value),
+    ].join('');
+
+    const travelItems = [
+      reviewItem('Flight Arrangement', travelArrangement === 'sponsored' ? 'Flight will be sponsored by the organizer' : 'I will arrange and pay for my own flight'),
+      reviewItem('Accommodation Preference', accommodation === 'self' ? 'Self-funded accommodation' : accommodation === 'sponsored' ? 'Fully arranged by organizer' : '-'),
+      reviewItem('Preferred Room Type', roomType === 'double bed' ? 'Double Bed' : roomType === 'twin bed' ? 'Twin Bed' : '-'),
+      reviewItem('Special Accommodation Requests', document.getElementById('special-accommodation-requests').value || '-', true),
+    ];
+    if (accommodation === 'self') {
+      const nearbyHotel = getCheckedValue('nearby-hotel');
+      const hotelMap = {
+        'ashley-tang': 'Ashley Tang Menteng Jakarta',
+        'stanley-wahid': 'Stanley Wahid Hasyim Jakarta',
+        'all-seasons-thamrin': 'All Seasons Jakarta Thamrin',
+        'other-nearby': 'I will choose another nearby hotel'
+      };
+      travelItems.splice(3, 0, reviewItem('Preferred Nearby Hotel', hotelMap[nearbyHotel] || '-'));
+      travelItems.splice(4, 0, reviewItem('Accommodation Details', document.getElementById('selfFundedInput').value || '-', true));
+    }
+    if (travelArrangement === 'sponsored') {
+      travelItems.splice(1, 0, reviewItem('Frequent Flyer Number', document.getElementById('frequent-flyer-number').value || '-'));
+      travelItems.splice(2, 0, reviewItem('Special Flight Requests', document.getElementById('special-flight-requests').value || '-', true));
+    }
+    if (travel) travel.innerHTML = travelItems.join('');
+
+    if (flight) {
+      if (travelArrangement === 'sponsored') {
+        flight.innerHTML = [
+          reviewItem('City of Departure', document.getElementById('sponsored-city-departure').value),
+          reviewItem('Preferred Arrival Date', document.getElementById('sp-arrive').value),
+          reviewItem('Preferred Departure Date', document.getElementById('sp-depart').value),
+          reviewItem('Flight Flexibility', getCheckedLabels('flex'), true),
+        ].join('');
+      } else {
+        flight.innerHTML = [
+          reviewItem('City of Departure', document.getElementById('sf-city').value),
+          reviewItem('Arrival Date in Jakarta', document.getElementById('sf-arrive').value),
+          reviewItem('Departure Date from Jakarta', document.getElementById('sf-depart').value),
+        ].join('');
+      }
+    }
+
+    const passportFile = document.getElementById('pp-file').files[0];
+    if (passport) passport.innerHTML = [
+      reviewItem('Passport Number', maskPassportNumber(document.getElementById('passport-num').value)),
+      reviewItem('Passport Expiry Date', document.getElementById('passport-exp').value),
+      reviewItem('Passport Scan File', passportFile ? passportFile.name : '-'),
+    ].join('');
+
+    const accessibility = getCheckedValue('accessibility-needs');
+    if (special) special.innerHTML = [
+      reviewItem('Dietary Requirements', getCheckedLabels('diet'), true),
+      reviewItem('Field Visit Participation', getCheckedLabels('field-visit'), true),
+      reviewItem('Accessibility Needs', accessibility === 'yes' ? 'Yes' : accessibility === 'no' ? 'No' : '-'),
+      ...(accessibility === 'yes' ? [reviewItem('Accessibility Support Details', document.getElementById('accessibility-details').value || '-', true)] : []),
+      reviewItem('Special Needs or Specific Accommodations', document.getElementById('special-needs').value || '-', true),
+      reviewItem('Terms & Consent', document.getElementById('consent').checked ? 'Confirmed' : 'Not confirmed'),
+    ].join('');
+  }
+
+  function goToReviewStep(stepNumber) {
+    currentStep = stepNumber;
+    showSection(getSectionId());
+    updateProgress();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
   // ── Validation ──
   function chk(id, errId, fn) {
     const el = document.getElementById(id);
@@ -650,6 +1011,126 @@
     el.classList.toggle('err', !ok);
     if (err) err.classList.toggle('show', !ok);
     return ok;
+  }
+
+
+  function setSubmitError(message = '') {
+    const box = document.getElementById('submit-error');
+    if (!box) return;
+    if (message) {
+      box.textContent = message;
+      box.classList.add('show');
+    } else {
+      box.textContent = '';
+      box.classList.remove('show');
+    }
+  }
+
+  function setSubmittingState(state) {
+    isSubmitting = state;
+    const btn = document.getElementById('btn-next');
+    const backBtn = document.getElementById('btn-back');
+    if (btn) {
+      btn.disabled = state;
+      btn.innerHTML = state
+        ? 'Submitting...'
+        : (currentStep === 6
+            ? 'Submit Registration <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'
+            : 'Continue <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>');
+    }
+    if (backBtn) backBtn.disabled = state;
+  }
+
+  function maskPassportNumber(value) {
+    if (!value) return '-';
+    const cleaned = String(value).trim();
+    if (cleaned.length <= 4) return cleaned;
+    return cleaned.slice(0, 2) + '*'.repeat(Math.max(0, cleaned.length - 4)) + cleaned.slice(-2);
+  }
+
+  function getDietaryRequirements() {
+    const checked = Array.from(document.querySelectorAll('input[name="diet"]:checked')).map(el => el.value);
+    return checked.length ? checked.join(', ') : '-';
+  }
+
+  async function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = String(reader.result || '');
+        const base64 = result.includes(',') ? result.split(',')[1] : result;
+        resolve(base64);
+      };
+      reader.onerror = () => reject(new Error('Failed to read uploaded file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function buildPayload() {
+    const travelArrangement = getCheckedValue('travel');
+    const accommodation = getCheckedValue('accommodation');
+    const roomType = getCheckedValue('room-type');
+    const accessibilityNeeds = getCheckedValue('accessibility-needs');
+    const passportFile = document.getElementById('pp-file').files[0];
+
+    return {
+      full_name: document.getElementById('fullname').value.trim(),
+      organization: document.getElementById('org').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      signal_number: document.getElementById('whatsapp').value.trim(),
+      country: document.getElementById('country').value.trim(),
+
+      travel_type: travelArrangement || '',
+      special_flight_requests: travelArrangement === 'sponsored' ? document.getElementById('special-flight-requests').value.trim() : '',
+      frequent_flyer_number: travelArrangement === 'sponsored' ? document.getElementById('frequent-flyer-number').value.trim() : '',
+
+      accommodation_type: accommodation || '',
+      hotel_option: accommodation === 'self' ? (getCheckedValue('nearby-hotel') || '') : '',
+      room_type: roomType || '',
+      accommodation_details: accommodation === 'self' ? document.getElementById('selfFundedInput').value.trim() : '',
+      special_accommodation_requests: document.getElementById('special-accommodation-requests').value.trim(),
+
+      departure_city: travelArrangement === 'sponsored'
+        ? document.getElementById('sponsored-city-departure').value.trim()
+        : document.getElementById('sf-city').value.trim(),
+      arrival_date: travelArrangement === 'sponsored'
+        ? document.getElementById('sp-arrive').value
+        : document.getElementById('sf-arrive').value,
+      departure_date: travelArrangement === 'sponsored'
+        ? document.getElementById('sp-depart').value
+        : document.getElementById('sf-depart').value,
+      flight_flexibility: travelArrangement === 'sponsored' ? (getCheckedValue('flex') || '') : '',
+
+      passport_number: document.getElementById('passport-num').value.trim(),
+      passport_expiry: document.getElementById('passport-exp').value,
+      passport_file: passportFile ? {
+        name: passportFile.name,
+        type: passportFile.type || 'application/octet-stream',
+        data: await fileToBase64(passportFile)
+      } : null,
+
+      accessibility_needs: accessibilityNeeds || '',
+      accessibility_details: accessibilityNeeds === 'yes' ? document.getElementById('accessibility-details').value.trim() : '',
+      dietary_requirements: getDietaryRequirements(),
+      field_visit_participation: getCheckedValue('field-visit') || '',
+      consent_agreed: document.getElementById('consent').checked
+    };
+  }
+
+  async function submitRegistration() {
+    const payload = await buildPayload();
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    if (!response.ok || result.status !== 'success') {
+      throw new Error(result.message || 'Submission failed.');
+    }
+    return result;
   }
 
   function validateStep() {
@@ -665,11 +1146,48 @@
       const travel = document.querySelector('input[name="travel"]:checked');
       const tErr = document.getElementById('e-travel');
       if (!travel) { tErr.classList.add('show'); ok = false; }
-      else { tErr.classList.remove('show'); travelChoice = travel.value; }
+      else {
+        tErr.classList.remove('show');
+        travelChoice = travel.value;
+        if (travelChoice === 'sponsored') {
+          ok = chk('special-flight-requests','e-special-flight-requests', el => el.value.trim().length > 0) && ok;
+          ok = chk('frequent-flyer-number','e-frequent-flyer-number', el => el.value.trim().length > 0) && ok;
+        } else {
+          document.getElementById('special-flight-requests').classList.remove('err');
+          document.getElementById('frequent-flyer-number').classList.remove('err');
+          document.getElementById('e-special-flight-requests').classList.remove('show');
+          document.getElementById('e-frequent-flyer-number').classList.remove('show');
+        }
+      }
+
+      const accommodation = document.querySelector('input[name="accommodation"]:checked');
+      const aErr = document.getElementById('e-accommodation');
+      if (!accommodation) { aErr.classList.add('show'); ok = false; }
+      else {
+        aErr.classList.remove('show');
+        const roomType = document.querySelector('input[name="room-type"]:checked');
+        const roomErr = document.getElementById('e-room-type');
+        if (!roomType) { roomErr.classList.add('show'); ok = false; }
+        else roomErr.classList.remove('show');
+
+        if (accommodation.value === 'self') {
+          const nearbyHotel = document.querySelector('input[name="nearby-hotel"]:checked');
+          const nearbyHotelErr = document.getElementById('e-nearby-hotel');
+          if (!nearbyHotel) { nearbyHotelErr.classList.add('show'); ok = false; }
+          else nearbyHotelErr.classList.remove('show');
+          ok = chk('selfFundedInput','e-selfFunded', el => el.value.trim().length > 0) && ok;
+        } else {
+          document.getElementById('e-nearby-hotel').classList.remove('show');
+          document.getElementById('selfFundedInput').classList.remove('err');
+          document.getElementById('e-selfFunded').classList.remove('show');
+        }
+      }
+
+      ok = chk('special-accommodation-requests','e-special-accommodation-requests', el => el.value.trim().length > 0) && ok;
     }
     else if (currentStep === 3) {
       if (travelChoice === 'sponsored') {
-        ok = chk('sp-city','e-sp-city', el => el.value.trim().length > 0) && ok;
+        ok = chk('sponsored-city-departure','e-sponsored-city-departure', el => el.value.trim().length > 0) && ok;
         ok = chk('sp-arrive','e-sp-arrive', el => el.value.length > 0) && ok;
         ok = chk('sp-depart','e-sp-depart', el => el.value.length > 0) && ok;
         const flex = document.querySelector('input[name="flex"]:checked');
@@ -695,6 +1213,15 @@
       const fv = document.querySelector('input[name="field-visit"]:checked');
       const fvErr = document.getElementById('e-field-visit');
       if (!fv) { fvErr.classList.add('show'); ok = false; } else fvErr.classList.remove('show');
+      const accessibilityNeeds = document.querySelector('input[name="accessibility-needs"]:checked');
+      const accessibilityErr = document.getElementById('e-accessibility-needs');
+      if (!accessibilityNeeds) { accessibilityErr.classList.add('show'); ok = false; } else accessibilityErr.classList.remove('show');
+      if (accessibilityNeeds && accessibilityNeeds.value === 'yes') {
+        ok = chk('accessibility-details','e-accessibility-details', el => el.value.trim().length > 0) && ok;
+      } else {
+        document.getElementById('accessibility-details').classList.remove('err');
+        document.getElementById('e-accessibility-details').classList.remove('show');
+      }
       const consent = document.getElementById('consent');
       const cErr = document.getElementById('e-consent');
       if (!consent.checked) { cErr.classList.add('show'); ok = false; } else cErr.classList.remove('show');
@@ -706,24 +1233,38 @@
     return ok;
   }
 
-  function nextStep() {
-    if (!validateStep()) return;
-    if (currentStep === 5) {
-      // Submit
-      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-      document.getElementById('form-footer').style.display = 'none';
-      document.getElementById('success').classList.add('show');
-      // mark all done
-      for (let i = 1; i <= 5; i++) {
-        const ps = document.getElementById('ps-' + i);
-        const pn = document.getElementById('pn-' + i);
-        ps.classList.remove('active'); ps.classList.add('done');
-        pn.innerHTML = '<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+  async function nextStep() {
+    if (isSubmitting) return;
+    if (currentStep <= 5 && !validateStep()) return;
+
+    if (currentStep === 6) {
+      setSubmitError('');
+      setSubmittingState(true);
+      try {
+        await submitRegistration();
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('form-footer').style.display = 'none';
+        document.getElementById('success').classList.add('show');
+        for (let i = 1; i <= 6; i++) {
+          const ps = document.getElementById('ps-' + i);
+          const pn = document.getElementById('pn-' + i);
+          if (!ps || !pn) continue;
+          ps.classList.remove('active'); ps.classList.add('done');
+          pn.innerHTML = '<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+        }
+        window.scrollTo({ top:0, behavior:'smooth' });
+      } catch (error) {
+        setSubmitError(error.message || 'Sorry, your registration could not be submitted yet. Please try again.');
+        const box = document.getElementById('submit-error');
+        if (box) box.scrollIntoView({ behavior:'smooth', block:'center' });
+      } finally {
+        setSubmittingState(false);
       }
-      window.scrollTo({ top:0, behavior:'smooth' });
       return;
     }
+
     currentStep++;
+    if (currentStep === 6) populateReview();
     showSection(getSectionId());
     updateProgress();
     window.scrollTo({ top:0, behavior:'smooth' });
@@ -753,6 +1294,26 @@
     document.getElementById(key + '-zone').style.borderColor = '';
   }
 
+  function toggleSponsoredTravelFields() {
+    const travel = document.querySelector('input[name="travel"]:checked');
+    const wrap = document.getElementById('sponsored-flight-extra-fields');
+    const specialFlight = document.getElementById('special-flight-requests');
+    const frequentFlyer = document.getElementById('frequent-flyer-number');
+    if (!wrap || !specialFlight || !frequentFlyer) return;
+
+    const show = travel && travel.value === 'sponsored';
+    wrap.style.display = show ? 'block' : 'none';
+
+    if (!show) {
+      specialFlight.value = '';
+      frequentFlyer.value = '';
+      specialFlight.classList.remove('err');
+      frequentFlyer.classList.remove('err');
+      document.getElementById('e-special-flight-requests').classList.remove('show');
+      document.getElementById('e-frequent-flyer-number').classList.remove('show');
+    }
+  }
+
   // ── Drag highlight ──
   document.querySelectorAll('.upload-zone').forEach(zone => {
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
@@ -772,10 +1333,17 @@
       else input.closest('.opt-item, .cb-item').classList.remove('selected');
 
       // clear related errors
-      const errs = { travel:'e-travel', flex:'e-flex', 'field-visit':'e-field-visit', diet:'e-diet' };
+      const errs = { travel:'e-travel', accommodation:'e-accommodation', flex:'e-flex', 'field-visit':'e-field-visit', 'accessibility-needs':'e-accessibility-needs', diet:'e-diet' };
       if (errs[input.name]) document.getElementById(errs[input.name]).classList.remove('show');
+      if (input.name === 'travel') toggleSponsoredTravelFields();
+      if (input.name === 'accommodation') toggleAccommodationFields();
+      if (input.name === 'accessibility-needs') toggleAccessibilityDetails();
     });
   });
+
+  toggleSponsoredTravelFields();
+  toggleAccommodationFields();
+  toggleAccessibilityDetails();
 
   // ── Init ──
   updateProgress();
