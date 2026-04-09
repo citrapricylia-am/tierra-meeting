@@ -346,14 +346,14 @@
             <label class="opt-item">
               <input type="radio" name="nearby-hotel" value="Ashley Tang Menteng Jakarta"/>
               <div class="opt-text">
-                <div class="opt-title">Ashley Wahid Hasyim Jakarta</div>
+                <div class="opt-title">Ashley Wahid Hasyim</div>
                 <div class="opt-sub">Popular hotel option near Morrissey Hotel.</div>
               </div>
             </label>
             <label class="opt-item">
               <input type="radio" name="nearby-hotel" value="Stanley Wahid Hasyim Jakarta"/>
               <div class="opt-text">
-                <div class="opt-title">Akmani Hotel Jakarta</div>
+                <div class="opt-title">Akmani Hotel Wahid Hasyim</div>
                 <div class="opt-sub">Located in the same area and close to the venue.</div>
               </div>
             </label>
@@ -387,26 +387,26 @@
       </div>
     </div>
 
-   <div class="field" id="roomTypeField" style="display: none;">
-  <label class="flbl">Preferred Room Type <span class="req">*</span>
-    <span class="hint">Please choose your preferred room type if the accommodation will be arranged by the organizer.</span>
-  </label>
-  <div class="opt-group" id="room-type-group">
-    <label class="opt-item">
-      <input type="radio" name="room-type" value="queen bed"/>
-      <div class="opt-text">
-        <div class="opt-title">Queen Bed</div>
+    <div class="field" id="roomTypeField" style="display: none;">
+      <label class="flbl">Preferred Room Type <span class="req">*</span>
+        <span class="hint">Please choose your preferred room type if the accommodation will be arranged by the organizer.</span>
+      </label>
+      <div class="opt-group" id="room-type-group">
+        <label class="opt-item">
+          <input type="radio" name="room-type" value="queen bed"/>
+          <div class="opt-text">
+            <div class="opt-title">Queen Bed</div>
+          </div>
+        </label>
+        <label class="opt-item">
+          <input type="radio" name="room-type" value="twin bed"/>
+          <div class="opt-text">
+            <div class="opt-title">Twin Bed</div>
+          </div>
+        </label>
       </div>
-    </label>
-    <label class="opt-item">
-      <input type="radio" name="room-type" value="twin bed"/>
-      <div class="opt-text">
-        <div class="opt-title">Twin Bed</div>
-      </div>
-    </label>
-  </div>
-  <div class="err-msg" id="e-room-type">Please select your preferred room type.</div>
-</div>
+      <div class="err-msg" id="e-room-type">Please select your preferred room type.</div>
+    </div>
 
     <div class="field">
       <label class="flbl" for="special-accommodation-requests">Do you have any special accommodation requests? <span class="req">*</span>
@@ -494,7 +494,7 @@
 
     <div class="note-box">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-      <p>Standard check-in is <strong>17 May 2026</strong> and check-out is <strong>22 May 2026</strong>. Please plan your travel around these dates.</p>
+      <p>Please plan your travel around these dates.</p>
     </div>
 
     <div class="field">
@@ -850,11 +850,12 @@
 
   function toggleAccommodationFields() {
     const selectedAccommodation = document.querySelector('input[name="accommodation"]:checked');
-    const isSelf = selectedAccommodation && selectedAccommodation.value === 'self';
-    const hasSelection = !!selectedAccommodation;
+    const selectedValue = selectedAccommodation ? selectedAccommodation.value : '';
+    const isSelf = selectedValue === 'self';
+    const isSponsored = selectedValue === 'sponsored';
 
     selfField.style.display = isSelf ? 'block' : 'none';
-    roomTypeField.style.display = hasSelection ? 'block' : 'none';
+    roomTypeField.style.display = isSponsored ? 'block' : 'none';
 
     if (!isSelf) {
       selfInput.value = '';
@@ -868,7 +869,7 @@
       document.getElementById('e-nearby-hotel').classList.remove('show');
     }
 
-    if (!hasSelection) {
+    if (!isSponsored) {
       document.querySelectorAll('input[name="room-type"]').forEach(r => {
         r.checked = false;
         const item = r.closest('.opt-item');
@@ -940,18 +941,12 @@
     const travelItems = [
       reviewItem('Flight Arrangement', travelArrangement === 'sponsored' ? 'Flight will be sponsored by the organizer' : 'I will arrange and pay for my own flight'),
       reviewItem('Accommodation Preference', accommodation === 'self' ? 'Self-funded accommodation' : accommodation === 'sponsored' ? 'Fully arranged by organizer' : '-'),
-      reviewItem('Preferred Room Type', roomType === 'double bed' ? 'Double Bed' : roomType === 'twin bed' ? 'Twin Bed' : '-'),
+      reviewItem('Preferred Room Type', accommodation === 'sponsored' ? (roomType === 'queen bed' ? 'Queen Bed' : roomType === 'twin bed' ? 'Twin Bed' : '-') : '-'),
       reviewItem('Special Accommodation Requests', document.getElementById('special-accommodation-requests').value || '-', true),
     ];
     if (accommodation === 'self') {
       const nearbyHotel = getCheckedValue('nearby-hotel');
-      const hotelMap = {
-        'ashley-tang': 'Ashley Tang Menteng Jakarta',
-        'stanley-wahid': 'Stanley Wahid Hasyim Jakarta',
-        'all-seasons-thamrin': 'All Seasons Jakarta Thamrin',
-        'other-nearby': 'I will choose another nearby hotel'
-      };
-      travelItems.splice(3, 0, reviewItem('Preferred Nearby Hotel', hotelMap[nearbyHotel] || '-'));
+      travelItems.splice(3, 0, reviewItem('Preferred Nearby Hotel', nearbyHotel !== '-' ? nearbyHotel : '-'));
       travelItems.splice(4, 0, reviewItem('Accommodation Details', document.getElementById('selfFundedInput').value || '-', true));
     }
     if (travelArrangement === 'sponsored') {
@@ -1086,7 +1081,7 @@
 
       accommodation_type: accommodation || '',
       hotel_option: accommodation === 'self' ? (getCheckedValue('nearby-hotel') || '') : '',
-      room_type: roomType || '',
+      room_type: accommodation === 'sponsored' ? (roomType || '') : '',
       accommodation_details: accommodation === 'self' ? document.getElementById('selfFundedInput').value.trim() : '',
       special_accommodation_requests: document.getElementById('special-accommodation-requests').value.trim(),
 
@@ -1165,21 +1160,23 @@
       if (!accommodation) { aErr.classList.add('show'); ok = false; }
       else {
         aErr.classList.remove('show');
-        const roomType = document.querySelector('input[name="room-type"]:checked');
-        const roomErr = document.getElementById('e-room-type');
-        if (!roomType) { roomErr.classList.add('show'); ok = false; }
-        else roomErr.classList.remove('show');
 
-        if (accommodation.value === 'self') {
+        if (accommodation.value === 'sponsored') {
+          const roomType = document.querySelector('input[name="room-type"]:checked');
+          const roomErr = document.getElementById('e-room-type');
+          if (!roomType) { roomErr.classList.add('show'); ok = false; }
+          else roomErr.classList.remove('show');
+
+          document.getElementById('e-nearby-hotel').classList.remove('show');
+          document.getElementById('selfFundedInput').classList.remove('err');
+          document.getElementById('e-selfFunded').classList.remove('show');
+        } else if (accommodation.value === 'self') {
+          document.getElementById('e-room-type').classList.remove('show');
           const nearbyHotel = document.querySelector('input[name="nearby-hotel"]:checked');
           const nearbyHotelErr = document.getElementById('e-nearby-hotel');
           if (!nearbyHotel) { nearbyHotelErr.classList.add('show'); ok = false; }
           else nearbyHotelErr.classList.remove('show');
           ok = chk('selfFundedInput','e-selfFunded', el => el.value.trim().length > 0) && ok;
-        } else {
-          document.getElementById('e-nearby-hotel').classList.remove('show');
-          document.getElementById('selfFundedInput').classList.remove('err');
-          document.getElementById('e-selfFunded').classList.remove('show');
         }
       }
 
