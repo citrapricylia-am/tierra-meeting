@@ -1167,7 +1167,6 @@
         travelChoice = travel.value;
         if (travelChoice === 'sponsored') {
           ok = chk('special-flight-requests','e-special-flight-requests', el => el.value.trim().length > 0) && ok;
-          ok = chk('frequent-flyer-number','e-frequent-flyer-number', el => el.value.trim().length > 0) && ok;
         } else {
           document.getElementById('special-flight-requests').classList.remove('err');
           document.getElementById('frequent-flyer-number').classList.remove('err');
