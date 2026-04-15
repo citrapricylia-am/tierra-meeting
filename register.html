@@ -259,10 +259,10 @@
 
     <div class="field">
       <label class="flbl" for="whatsapp">Signal Number <span class="req">*</span>
-        <span class="hint">For emergency coordination during the event — include country code</span>
+        <span class="hint">Masukkan nomor saja, tanpa huruf atau simbol lain</span>
       </label>
-      <input type="tel" id="whatsapp" placeholder="+62 812 3456 7890"/>
-      <div class="err-msg" id="e-whatsapp">Please enter your Signal number.</div>
+      <input type="tel" id="whatsapp" inputmode="numeric" autocomplete="tel" placeholder="contoh: 6281234567890" oninput="enforceNumericSignal(this)"/>
+      <div class="err-msg" id="e-whatsapp">Please enter a valid Signal number.</div>
     </div>
 
     <div class="field">
@@ -312,8 +312,9 @@
         <div class="err-msg" id="e-special-flight-requests">Please enter your special flight requests.</div>
       </div>
       <div class="field">
-        <label class="flbl" for="frequent-flyer-number">Frequent Flyer Number </label>
+        <label class="flbl" for="frequent-flyer-number">Frequent Flyer Number <span class="req">*</span></label>
         <input type="text" id="frequent-flyer-number" placeholder="e.g. 123456789"/>
+        <div class="err-msg" id="e-frequent-flyer-number">Please enter your frequent flyer number.</div>
       </div>
     </div>
 
@@ -754,7 +755,7 @@
   </div>
   <div class="help-card">
     <p>Need help completing your registration? Our team is ready to assist.</p>
-    <a href="mailto:hello@tierraconvening.org">hello@tierralliance.org</a>
+    <a href="mailto:hello@tierraconvening.org">hello@tierraconvening.org</a>
   </div>
 </aside>
 </div><!-- /page-body -->
@@ -906,6 +907,20 @@
     return items.length ? items.map(item => item.closest('label').innerText.replace(/\s+/g, ' ').trim()).join(', ') : '-';
   }
 
+
+  function enforceNumericSignal(el) {
+    if (!el) return;
+    el.value = String(el.value || '').replace(/\D/g, '');
+    el.classList.remove('err');
+    const err = document.getElementById('e-whatsapp');
+    if (err) err.classList.remove('show');
+  }
+
+  function getSignalNumber() {
+    const el = document.getElementById('whatsapp');
+    return el ? String(el.value || '').replace(/\D/g, '') : '';
+  }
+
   function escapeHtml(value) {
     return String(value ?? '-')
       .replace(/&/g, '&amp;')
@@ -1047,6 +1062,10 @@
     return checked.length ? checked.join(', ') : '-';
   }
 
+  function normalizePhoneNumber(value) {
+    return String(value || '').replace(/\D/g, '');
+  }
+
   async function fileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1071,7 +1090,7 @@
       full_name: document.getElementById('fullname').value.trim(),
       organization: document.getElementById('org').value.trim(),
       email: document.getElementById('email').value.trim(),
-      signal_number: document.getElementById('whatsapp').value.trim(),
+      signal_number: getSignalNumber(),
       country: document.getElementById('country').value.trim(),
 
       travel_type: travelArrangement || '',
@@ -1133,7 +1152,10 @@
       ok = chk('fullname','e-fullname', el => el.value.trim().length > 0) && ok;
       ok = chk('org','e-org', el => el.value.trim().length > 0) && ok;
       ok = chk('email','e-email', el => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) && ok;
-      ok = chk('whatsapp','e-whatsapp', el => el.value.trim().length > 0) && ok;
+      ok = chk('whatsapp','e-whatsapp', el => {
+        const cleaned = el.value.replace(/[^\d+]/g, '');
+        return cleaned.length >= 7;
+      }) && ok;
       ok = chk('country','e-country', el => el.value.trim().length > 0) && ok;
     }
     else if (currentStep === 2) {
@@ -1145,7 +1167,7 @@
         travelChoice = travel.value;
         if (travelChoice === 'sponsored') {
           ok = chk('special-flight-requests','e-special-flight-requests', el => el.value.trim().length > 0) && ok;
-  
+          ok = chk('frequent-flyer-number','e-frequent-flyer-number', el => el.value.trim().length > 0) && ok;
         } else {
           document.getElementById('special-flight-requests').classList.remove('err');
           document.getElementById('frequent-flyer-number').classList.remove('err');
@@ -1342,6 +1364,7 @@
   toggleAccessibilityDetails();
 
   // ── Init ──
+  enforceNumericSignal(document.getElementById('whatsapp'));
   updateProgress();
 </script>
 </body>
